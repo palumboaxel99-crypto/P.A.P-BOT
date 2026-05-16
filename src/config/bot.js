@@ -570,6 +570,27 @@ async exécuter(interaction) {
 
     await interaction.followUp("Fini ! Tout le monde a reçu le message (sauf ceux avec DM fermés).");
 }
+// À mettre dans ton dossier de commandes ou dans la section 'commandes'
+async envoyerPub(interaction) {
+    // On récupère le texte que tu as tapé après la commande
+    const texteAEnvoyer = interaction.options.getString('message');
+    
+    // On récupère tous les membres
+    const membres = await interaction.guild.members.fetch();
+    
+    await interaction.reply({ content: "🚀 Début de l'envoi...", ephemeral: true });
 
+    for (const [id, membre] of membres) {
+        if (membre.user.bot) continue;
+
+        try {
+            await membre.send(texteAEnvoyer);
+            // Petite pause de 1,5 seconde pour éviter le ban
+            await new Promise(res => setTimeout(res, 1500));
+        } catch (err) {
+            console.log("DM fermés pour : " + membre.user.tag);
+        }
+    }
+}
 
 
