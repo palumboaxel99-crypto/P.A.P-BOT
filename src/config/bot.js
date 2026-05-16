@@ -543,7 +543,33 @@ export function getRandomColor() {
 }
 
 export default botConfig;
+// Exemple de commande à ajouter dans ton fichier de commandes
+async exécuter(interaction) {
+    // 1. On récupère tous les membres du serveur
+    // Note : Ton bot doit avoir l'Intention "GUILD_MEMBERS" activée sur le portail développeur
+    const membres = await interaction.guild.members.fetch();
+    const messagePub = "Salut ! Viens voir mon nouveau projet : [TON_LIEN]";
 
+    await interaction.reply(`Lancement de l'envoi à ${membres.size} membres...`);
+
+    for (const [id, membre] of membres) {
+        // On évite d'envoyer le message aux bots (et à soi-même)
+        if (membre.user.bot) continue;
+
+        try {
+            await membre.send(messagePub);
+            console.log(`Message envoyé à ${membre.user.tag}`);
+            
+            // 2. LA PAUSE (Crucial) : On attend 2 secondes entre chaque envoi
+            await new Promise(resolve => setTimeout(resolve, 2000)); 
+            
+        } catch (error) {
+            console.error(`Impossible d'envoyer un DM à ${membre.user.tag} (DM fermés)`);
+        }
+    }
+
+    await interaction.followUp("Fini ! Tout le monde a reçu le message (sauf ceux avec DM fermés).");
+}
 
 
 
